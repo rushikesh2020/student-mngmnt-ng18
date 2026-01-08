@@ -140,8 +140,8 @@
 /* Material Table Styling */
 .student-table {
   width: 100%;
-  min-width: 1200px;
   background-color: white;
+  table-layout: fixed;
 }
 
 .header-row {
@@ -160,12 +160,16 @@
   color: #333;
   padding: 16px;
   border-bottom: 2px solid #1976d2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .filter-cell {
   background-color: #fafafa;
   padding: 8px 16px;
   border-bottom: 1px solid #e0e0e0;
+  overflow: hidden;
 }
 
 .filter-input {
@@ -218,11 +222,18 @@
 .data-cell {
   padding: 16px;
   border-bottom: 1px solid #e0e0e0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cell-content {
   font-weight: 500;
   color: #333;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Chip Styling */
@@ -276,23 +287,23 @@
 /* Actions Column */
 .actions-header {
   text-align: center;
-  width: 120px;
+  width: 100px;
 }
 
 .actions-cell {
   text-align: center;
-  width: 120px;
+  width: 100px;
 }
 
 .action-buttons {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .action-btn {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   transition: all 0.2s ease;
 }
 
@@ -398,6 +409,16 @@
   .filter-grid {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   }
+  
+  .header-cell,
+  .data-cell,
+  .filter-cell {
+    padding: 12px 8px;
+  }
+  
+  .filter-input {
+    font-size: 0.75rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -429,23 +450,31 @@
   }
   
   .data-cell {
-    padding: 12px 8px;
+    padding: 8px 4px;
     font-size: 0.875rem;
   }
   
   .header-cell {
-    padding: 12px 8px;
+    padding: 8px 4px;
     font-size: 0.875rem;
   }
   
   .action-buttons {
-    flex-direction: column;
-    gap: 4px;
+    gap: 2px;
   }
   
   .action-btn {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
+  }
+  
+  .filter-input {
+    font-size: 0.7rem;
+  }
+  
+  .filter-input .mat-mdc-form-field-infix {
+    padding: 4px 0;
+  }
   }
 }
 
@@ -471,8 +500,104 @@
     width: 3rem;
     height: 3rem;
   }
+  
+  .data-cell,
+  .header-cell,
+  .filter-cell {
+    padding: 6px 2px;
+    font-size: 0.75rem;
+  }
+  
+  .action-btn {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .action-btn mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
 }
 
+/* Column Width Specifications */
+.student-table .mat-column-firstName {
+  width: 12%;
+  min-width: 80px;
+}
+
+.student-table .mat-column-middleName {
+  width: 12%;
+  min-width: 80px;
+}
+
+.student-table .mat-column-lastName {
+  width: 12%;
+  min-width: 80px;
+}
+
+.student-table .mat-column-age {
+  width: 8%;
+  min-width: 60px;
+  text-align: center;
+}
+
+.student-table .mat-column-class {
+  width: 8%;
+  min-width: 60px;
+  text-align: center;
+}
+
+.student-table .mat-column-division {
+  width: 8%;
+  min-width: 60px;
+  text-align: center;
+}
+
+.student-table .mat-column-dateOfBirth {
+  width: 15%;
+  min-width: 100px;
+}
+
+.student-table .mat-column-email {
+  width: 20%;
+  min-width: 120px;
+}
+
+.student-table .mat-column-actions {
+  width: 10%;
+  min-width: 80px;
+}
+
+/* Filter column widths */
+.student-table .mat-column-firstName-filter,
+.student-table .mat-column-middleName-filter,
+.student-table .mat-column-lastName-filter {
+  width: 12%;
+  min-width: 80px;
+}
+
+.student-table .mat-column-age-filter,
+.student-table .mat-column-class-filter,
+.student-table .mat-column-division-filter {
+  width: 8%;
+  min-width: 60px;
+}
+
+.student-table .mat-column-dateOfBirth-filter {
+  width: 15%;
+  min-width: 100px;
+}
+
+.student-table .mat-column-email-filter {
+  width: 20%;
+  min-width: 120px;
+}
+
+.student-table .mat-column-actions-filter {
+  width: 10%;
+  min-width: 80px;
+}
 /* Animation Classes */
 .fade-in {
   animation: fadeIn 0.3s ease-in-out;
