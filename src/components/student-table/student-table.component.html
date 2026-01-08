@@ -59,9 +59,10 @@
       </div>
 
       <!-- Material Table -->
-      <table mat-table [dataSource]="dataSource" class="student-table mat-elevation-2">
+      <div class="table-scroll-container">
+        <table mat-table [dataSource]="dataSource" class="student-table mat-elevation-2">
         
-        <!-- First Name Column -->
+          <!-- First Name Column -->
         <ng-container matColumnDef="firstName">
           <th mat-header-cell *matHeaderCellDef class="header-cell">
             <div class="header-content">
@@ -312,11 +313,12 @@
           </th>
         </ng-container>
 
-        <!-- Table Rows -->
-        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-row"></tr>
-        <tr mat-header-row *matHeaderRowDef="filterColumns" class="filter-row"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="data-row"></tr>
-      </table>
+          <!-- Table Rows -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-row"></tr>
+          <tr mat-header-row *matHeaderRowDef="filterColumns" class="filter-row"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="data-row"></tr>
+        </table>
+      </div>
 
       <!-- No Results Message -->
       <div class="no-results-container" *ngIf="dataSource.data.length === 0 && students.length > 0">
