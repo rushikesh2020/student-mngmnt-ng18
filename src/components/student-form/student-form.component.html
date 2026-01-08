@@ -1,0 +1,106 @@
+<mat-card class="student-form-card" *ngIf="isVisible">
+  <mat-card-header class="form-header">
+    <mat-card-title class="form-title">
+      <mat-icon>{{ formIcon }}</mat-icon>
+      {{ formTitle }}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="form-content">
+    <form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstName" placeholder="Enter first name">
+          <mat-error *ngIf="hasError('firstName', 'required')">
+            First name is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Middle Name</mat-label>
+          <input matInput formControlName="middleName" placeholder="Enter middle name">
+          <mat-error *ngIf="hasError('middleName', 'required')">
+            Middle name is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lastName" placeholder="Enter last name">
+          <mat-error *ngIf="hasError('lastName', 'required')">
+            Last name is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Age</mat-label>
+          <input matInput type="number" formControlName="age" placeholder="Enter age">
+          <mat-error *ngIf="hasError('age', 'required')">
+            Age is required
+          </mat-error>
+          <mat-error *ngIf="hasError('age', 'min')">
+            Age must be greater than 10
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Class</mat-label>
+          <mat-select formControlName="class" placeholder="Select class">
+            <mat-option *ngFor="let cls of classOptions" [value]="cls">
+              {{ cls }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="hasError('class', 'required')">
+            Class is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Division</mat-label>
+          <mat-select formControlName="division" placeholder="Select division">
+            <mat-option *ngFor="let div of divisionOptions" [value]="div">
+              {{ div }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="hasError('division', 'required')">
+            Division is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Date of Birth</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="dateOfBirth" placeholder="Select date">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="hasError('dateOfBirth', 'required')">
+            Date of birth is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="Enter email address">
+          <mat-error *ngIf="hasError('email', 'required')">
+            Email is required
+          </mat-error>
+          <mat-error *ngIf="hasError('email', 'email')">
+            Please enter a valid email address
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div class="form-actions">
+        <button mat-button type="button" (click)="onCancel()">
+          Cancel
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="studentForm.invalid">
+          <mat-icon>save</mat-icon>
+          {{ submitButtonText }}
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

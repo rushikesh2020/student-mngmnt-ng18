@@ -28,116 +28,13 @@
   <mat-card-content class="card-content">
 
     <!-- Student Form -->
-    <mat-card class="student-form-card" *ngIf="isFormVisible">
-      <mat-card-header class="form-header">
-        <mat-card-title class="form-title">
-          <mat-icon>{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
-          {{ isEditMode ? 'Edit Student' : 'Add New Student' }}
-        </mat-card-title>
-      </mat-card-header>
+    <app-student-form
+      [isVisible]="isFormVisible"
+      [student]="selectedStudent"
+      (formSubmit)="onFormSubmit($event)"
+      (formCancel)="onFormCancel()">
+    </app-student-form>
 
-      <mat-card-content class="form-content">
-        <form [formGroup]="studentForm" (ngSubmit)="onSaveStudent()">
-          <div class="form-grid">
-
-            <mat-form-field appearance="outline">
-              <mat-label>First Name</mat-label>
-              <input matInput formControlName="firstName" placeholder="Enter first name">
-              <mat-error *ngIf="studentForm.get('firstName')?.hasError('required')">
-                First name is required
-              </mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Middle Name</mat-label>
-              <input matInput formControlName="middleName" placeholder="Enter middle name">
-              <mat-error *ngIf="studentForm.get('middleName')?.hasError('required')">
-                Middle name is required
-              </mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Last Name</mat-label>
-              <input matInput formControlName="lastName" placeholder="Enter last name">
-              <mat-error *ngIf="studentForm.get('lastName')?.hasError('required')">
-                Last name is required
-              </mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Age</mat-label>
-              <input matInput type="number" formControlName="age" placeholder="Enter age">
-              <mat-error *ngIf="studentForm.get('age')?.hasError('required')">
-                Age is required
-              </mat-error>
-              <mat-error *ngIf="studentForm.get('age')?.hasError('min')">
-                Age must be greater than 10
-              </mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Class</mat-label>
-              <mat-select formControlName="class" placeholder="Select class">
-                <mat-option value="8th">8th</mat-option>
-                <mat-option value="9th">9th</mat-option>
-                <mat-option value="10th">10th</mat-option>
-                <mat-option value="11th">11th</mat-option>
-                <mat-option value="12th">12th</mat-option>
-              </mat-select>
-              <mat-error *ngIf="studentForm.get('class')?.hasError('required')">
-                Class is required
-              </mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Division</mat-label>
-              <mat-select formControlName="division" placeholder="Select division">
-                <mat-option value="A">A</mat-option>
-                <mat-option value="B">B</mat-option>
-                <mat-option value="C">C</mat-option>
-                <mat-option value="D">D</mat-option>
-              </mat-select>
-              <mat-error *ngIf="studentForm.get('division')?.hasError('required')">
-                Division is required
-              </mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Date of Birth</mat-label>
-              <input matInput [matDatepicker]="picker" formControlName="dateOfBirth" placeholder="Select date">
-              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-              <mat-error *ngIf="studentForm.get('dateOfBirth')?.hasError('required')">
-                Date of birth is required
-              </mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" placeholder="Enter email address">
-              <mat-error *ngIf="studentForm.get('email')?.hasError('required')">
-                Email is required
-              </mat-error>
-              <mat-error *ngIf="studentForm.get('email')?.hasError('email')">
-                Please enter a valid email address
-              </mat-error>
-            </mat-form-field>
-
-          </div>
-
-          <div class="form-actions">
-            <button mat-button type="button" (click)="cancelForm()">
-              Cancel
-            </button>
-            <button mat-raised-button color="primary" type="submit" [disabled]="!studentForm.valid">
-              <mat-icon>save</mat-icon>
-              {{ isEditMode ? 'Update Student' : 'Add Student' }}
-            </button>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
-    
     <!-- Filter Controls -->
     <mat-toolbar class="filter-toolbar" color="accent">
       <span class="toolbar-title">
