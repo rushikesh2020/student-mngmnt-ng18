@@ -6,8 +6,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { StudentTableComponent } from './components/student-table/student-table.component';
-import { StudentModalComponent } from './components/student-modal/student-modal.component';
-import { Student, ModalData } from './models/student.interface';
+import { Student } from './models/student.interface';
 
 @Component({
   selector: 'app-root',
@@ -19,17 +18,12 @@ import { Student, ModalData } from './models/student.interface';
     MatToolbarModule,
     MatIconModule,
     MatSnackBarModule,
-    StudentTableComponent,
-    StudentModalComponent
+    StudentTableComponent
   ],
 })
 export class App implements OnInit {
   // Core data management
   students: Student[] = [];
-  
-  // Modal state management
-  isModalVisible: boolean = false;
-  currentModalData: ModalData | null = null;
 
   constructor(private snackBar: MatSnackBar) {}
 
@@ -101,42 +95,21 @@ export class App implements OnInit {
   }
 
   /**
-   * Handle modal open requests from student table component
-   */
-  onModalOpen(modalData: ModalData): void {
-    this.currentModalData = modalData;
-    this.isModalVisible = true;
-  }
-
-  /**
-   * Handle modal close events
-   */
-  onModalClose(): void {
-    this.isModalVisible = false;
-    this.currentModalData = null;
-  }
-
-  /**
    * Handle student save operations (Add/Edit)
    */
   onStudentSave(student: Student): void {
     const existingIndex = this.students.findIndex(s => s.id === student.id);
-    
-    console.log('Received student save event:', student); // Debug log
-    console.log('Existing index:', existingIndex); // Debug log
-    
+
     if (existingIndex >= 0) {
       // Update existing student
       this.students[existingIndex] = student;
-      console.log('Updated existing student'); // Debug log
       this.showSuccessMessage(`Student ${student.firstName} ${student.lastName} updated successfully!`);
     } else {
       // Add new student
       this.students.push(student);
-      console.log('Added new student, total students:', this.students.length); // Debug log
       this.showSuccessMessage(`Student ${student.firstName} ${student.lastName} added successfully!`);
     }
-    
+
     // Force change detection
     this.students = [...this.students];
   }

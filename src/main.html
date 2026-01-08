@@ -12,16 +12,8 @@
     <!-- Student Table Component -->
     <app-student-table
       [students]="students"
-      (modalOpen)="onModalOpen($event)">
-    </app-student-table>
-
-    <!-- Student Modal Component -->
-    <app-student-modal
-      [isVisible]="isModalVisible"
-      [modalData]="currentModalData"
-      (modalClose)="onModalClose()"
       (studentSave)="onStudentSave($event)"
       (studentDelete)="onStudentDelete($event)">
-    </app-student-modal>
+    </app-student-table>
   </main>
 </div>

@@ -1,7 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
@@ -13,7 +12,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatChipsModule } from '@angular/material/chips';
-import { Student, ModalData } from '../../models/student.interface';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { Student } from '../../models/student.interface';
 
 @Component({
   selector: 'app-student-table',
@@ -23,6 +25,7 @@ import { Student, ModalData } from '../../models/student.interface';
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
@@ -32,7 +35,10 @@ import { Student, ModalData } from '../../models/student.interface';
     MatFormFieldModule,
     MatInputModule,
     MatToolbarModule,
-    MatChipsModule
+    MatChipsModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
 })
 export class StudentTableComponent implements OnChanges {
@@ -40,7 +46,14 @@ export class StudentTableComponent implements OnChanges {
   @Input() students: Student[] = [];
 
   // Output events to parent component
-  @Output() modalOpen = new EventEmitter<ModalData>();
+  @Output() studentSave = new EventEmitter<Student>();
+  @Output() studentDelete = new EventEmitter<number>();
+
+  // Form management
+  studentForm: FormGroup;
+  isFormVisible: boolean = false;
+  isEditMode: boolean = false;
+  editingStudentId: number | null = null;
 
   // Filtered data and search filters
   dataSource = new MatTableDataSource<Student>([]);
@@ -54,6 +67,10 @@ export class StudentTableComponent implements OnChanges {
     dateOfBirth: '',
     email: ''
   };
+
+  constructor(private fb: FormBuilder) {
+    this.studentForm = this.createForm();
+  }
 
   // Table columns configuration
   displayedColumns: string[] = [
@@ -137,32 +154,116 @@ export class StudentTableComponent implements OnChanges {
   }
 
   /**
-   * Emit event to open modal in Add mode
+   * Create reactive form with validation
+   */
+  createForm(): FormGroup {
+    return this.fb.group({
+      firstName: ['', Validators.required],
+      middleName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      age: ['', [Validators.required, Validators.min(11)]],
+      class: ['', Validators.required],
+      division: ['', Validators.required],
+      dateOfBirth: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]]
+    });
+  }
+
+  /**
+   * Show form for adding new student
    */
   onAddStudent(): void {
-    this.modalOpen.emit({
-      mode: 'add'
-    });
+    this.isEditMode = false;
+    this.editingStudentId = null;
+    this.studentForm.reset();
+    this.isFormVisible = true;
+    this.scrollToForm();
   }
 
   /**
-   * Emit event to open modal in Edit mode with selected student data
+   * Show form for editing existing student
    */
   onEditStudent(student: Student): void {
-    this.modalOpen.emit({
-      mode: 'edit',
-      student: student
+    this.isEditMode = true;
+    this.editingStudentId = student.id;
+    this.studentForm.patchValue({
+      firstName: student.firstName,
+      middleName: student.middleName,
+      lastName: student.lastName,
+      age: student.age,
+      class: student.class,
+      division: student.division,
+      dateOfBirth: new Date(student.dateOfBirth),
+      email: student.email
     });
+    this.isFormVisible = true;
+    this.scrollToForm();
   }
 
   /**
-   * Emit event to open modal in Delete mode with selected student data
+   * Delete student
    */
   onDeleteStudent(student: Student): void {
-    this.modalOpen.emit({
-      mode: 'delete',
-      student: student
-    });
+    if (confirm(`Are you sure you want to delete ${student.firstName} ${student.lastName}?`)) {
+      this.studentDelete.emit(student.id);
+    }
+  }
+
+  /**
+   * Save form data
+   */
+  onSaveStudent(): void {
+    if (this.studentForm.valid) {
+      const formValue = this.studentForm.value;
+      const student: Student = {
+        id: this.isEditMode ? this.editingStudentId! : Date.now(),
+        firstName: formValue.firstName,
+        middleName: formValue.middleName,
+        lastName: formValue.lastName,
+        age: formValue.age,
+        class: formValue.class,
+        division: formValue.division,
+        dateOfBirth: this.formatDateToString(formValue.dateOfBirth),
+        email: formValue.email
+      };
+
+      this.studentSave.emit(student);
+      this.cancelForm();
+    }
+  }
+
+  /**
+   * Cancel and hide form
+   */
+  cancelForm(): void {
+    this.isFormVisible = false;
+    this.isEditMode = false;
+    this.editingStudentId = null;
+    this.studentForm.reset();
+  }
+
+  /**
+   * Format date to string for storage
+   */
+  formatDateToString(date: Date): string {
+    if (!date) return '';
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  /**
+   * Scroll to form section
+   */
+  scrollToForm(): void {
+    setTimeout(() => {
+      const formElement = document.querySelector('.student-form-card');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   }
 
   /**
