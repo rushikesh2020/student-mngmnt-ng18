@@ -1,0 +1,367 @@
+<!-- Student Management Card -->
+<mat-card class="student-management-card">
+  
+  <!-- Card Header with Actions -->
+  <mat-card-header class="card-header">
+    <div class="header-content">
+      <div class="title-section">
+        <mat-card-title class="main-title">
+          <mat-icon class="title-icon">school</mat-icon>
+          Student Management System
+        </mat-card-title>
+        <mat-card-subtitle>Manage your student records efficiently</mat-card-subtitle>
+      </div>
+      
+      <div class="action-section">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="onAddStudent()"
+          class="add-student-btn">
+          <mat-icon>person_add</mat-icon>
+          Add Student
+        </button>
+      </div>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content class="card-content">
+    
+    <!-- Filter Controls -->
+    <mat-toolbar class="filter-toolbar" color="accent">
+      <span class="toolbar-title">
+        <mat-icon>filter_list</mat-icon>
+        Search Filters
+      </span>
+      <span class="spacer"></span>
+      <mat-chip-set *ngIf="getActiveFilterCount() > 0" class="filter-chips">
+        <mat-chip class="filter-count-chip">
+          {{ getActiveFilterCount() }} Active Filter{{ getActiveFilterCount() !== 1 ? 's' : '' }}
+        </mat-chip>
+      </mat-chip-set>
+      <button 
+        mat-icon-button 
+        (click)="clearAllFilters()"
+        [disabled]="getActiveFilterCount() === 0"
+        matTooltip="Clear all filters">
+        <mat-icon>clear_all</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <!-- Material Data Table -->
+    <div class="table-container" *ngIf="students.length > 0; else noDataTemplate">
+      
+      <!-- Results Summary -->
+      <div class="results-summary">
+        <span class="results-text">
+          Showing {{ dataSource.data.length }} of {{ students.length }} students
+        </span>
+      </div>
+
+      <!-- Material Table -->
+      <table mat-table [dataSource]="dataSource" class="student-table mat-elevation-2">
+        
+        <!-- First Name Column -->
+        <ng-container matColumnDef="firstName">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">
+            <div class="header-content">
+              <mat-icon class="column-icon">person</mat-icon>
+              <span>First Name</span>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let student" class="data-cell">
+            <span class="cell-content">{{ student.firstName }}</span>
+          </td>
+        </ng-container>
+
+        <!-- First Name Filter Row -->
+        <ng-container matColumnDef="firstName-filter">
+          <th mat-header-cell *matHeaderCellDef class="filter-cell">
+            <mat-form-field appearance="outline" class="filter-input">
+              <input 
+                matInput 
+                [(ngModel)]="searchFilters.firstName"
+                (input)="onSearchChange()"
+                placeholder="Search...">
+            </mat-form-field>
+          </th>
+        </ng-container>
+
+        <!-- Middle Name Column -->
+        <ng-container matColumnDef="middleName">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">
+            <div class="header-content">
+              <mat-icon class="column-icon">person_outline</mat-icon>
+              <span>Middle Name</span>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let student" class="data-cell">
+            <span class="cell-content">{{ student.middleName }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Middle Name Filter Row -->
+        <ng-container matColumnDef="middleName-filter">
+          <th mat-header-cell *matHeaderCellDef class="filter-cell">
+            <mat-form-field appearance="outline" class="filter-input">
+              <input 
+                matInput 
+                [(ngModel)]="searchFilters.middleName"
+                (input)="onSearchChange()"
+                placeholder="Search...">
+            </mat-form-field>
+          </th>
+        </ng-container>
+
+        <!-- Last Name Column -->
+        <ng-container matColumnDef="lastName">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">
+            <div class="header-content">
+              <mat-icon class="column-icon">badge</mat-icon>
+              <span>Last Name</span>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let student" class="data-cell">
+            <span class="cell-content">{{ student.lastName }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Last Name Filter Row -->
+        <ng-container matColumnDef="lastName-filter">
+          <th mat-header-cell *matHeaderCellDef class="filter-cell">
+            <mat-form-field appearance="outline" class="filter-input">
+              <input 
+                matInput 
+                [(ngModel)]="searchFilters.lastName"
+                (input)="onSearchChange()"
+                placeholder="Search...">
+            </mat-form-field>
+          </th>
+        </ng-container>
+
+        <!-- Age Column -->
+        <ng-container matColumnDef="age">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">
+            <div class="header-content">
+              <mat-icon class="column-icon">cake</mat-icon>
+              <span>Age</span>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let student" class="data-cell">
+            <mat-chip class="age-chip">{{ student.age }}</mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Age Filter Row -->
+        <ng-container matColumnDef="age-filter">
+          <th mat-header-cell *matHeaderCellDef class="filter-cell">
+            <mat-form-field appearance="outline" class="filter-input">
+              <input 
+                matInput 
+                [(ngModel)]="searchFilters.age"
+                (input)="onSearchChange()"
+                placeholder="Search...">
+            </mat-form-field>
+          </th>
+        </ng-container>
+
+        <!-- Class Column -->
+        <ng-container matColumnDef="class">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">
+            <div class="header-content">
+              <mat-icon class="column-icon">class</mat-icon>
+              <span>Class</span>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let student" class="data-cell">
+            <mat-chip class="class-chip" color="primary">{{ student.class }}</mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Class Filter Row -->
+        <ng-container matColumnDef="class-filter">
+          <th mat-header-cell *matHeaderCellDef class="filter-cell">
+            <mat-form-field appearance="outline" class="filter-input">
+              <input 
+                matInput 
+                [(ngModel)]="searchFilters.class"
+                (input)="onSearchChange()"
+                placeholder="Search...">
+            </mat-form-field>
+          </th>
+        </ng-container>
+
+        <!-- Division Column -->
+        <ng-container matColumnDef="division">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">
+            <div class="header-content">
+              <mat-icon class="column-icon">group</mat-icon>
+              <span>Division</span>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let student" class="data-cell">
+            <mat-chip class="division-chip" color="accent">{{ student.division }}</mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Division Filter Row -->
+        <ng-container matColumnDef="division-filter">
+          <th mat-header-cell *matHeaderCellDef class="filter-cell">
+            <mat-form-field appearance="outline" class="filter-input">
+              <input 
+                matInput 
+                [(ngModel)]="searchFilters.division"
+                (input)="onSearchChange()"
+                placeholder="Search...">
+            </mat-form-field>
+          </th>
+        </ng-container>
+
+        <!-- Date of Birth Column -->
+        <ng-container matColumnDef="dateOfBirth">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">
+            <div class="header-content">
+              <mat-icon class="column-icon">event</mat-icon>
+              <span>Date of Birth</span>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let student" class="data-cell">
+            <div class="date-content">
+              <mat-icon class="date-icon">calendar_today</mat-icon>
+              <span>{{ formatDate(student.dateOfBirth) }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Date of Birth Filter Row -->
+        <ng-container matColumnDef="dateOfBirth-filter">
+          <th mat-header-cell *matHeaderCellDef class="filter-cell">
+            <mat-form-field appearance="outline" class="filter-input">
+              <input 
+                matInput 
+                [(ngModel)]="searchFilters.dateOfBirth"
+                (input)="onSearchChange()"
+                placeholder="Search...">
+            </mat-form-field>
+          </th>
+        </ng-container>
+
+        <!-- Email Column -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">
+            <div class="header-content">
+              <mat-icon class="column-icon">email</mat-icon>
+              <span>Email</span>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let student" class="data-cell">
+            <div class="email-content">
+              <mat-icon class="email-icon">alternate_email</mat-icon>
+              <span class="email-text">{{ student.email }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Email Filter Row -->
+        <ng-container matColumnDef="email-filter">
+          <th mat-header-cell *matHeaderCellDef class="filter-cell">
+            <mat-form-field appearance="outline" class="filter-input">
+              <input 
+                matInput 
+                [(ngModel)]="searchFilters.email"
+                (input)="onSearchChange()"
+                placeholder="Search...">
+            </mat-form-field>
+          </th>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="header-cell actions-header">
+            <div class="header-content">
+              <mat-icon class="column-icon">settings</mat-icon>
+              <span>Actions</span>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let student" class="data-cell actions-cell">
+            <div class="action-buttons">
+              <button 
+                mat-mini-fab 
+                color="primary"
+                (click)="onEditStudent(student)"
+                matTooltip="Edit Student"
+                class="action-btn edit-btn">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button 
+                mat-mini-fab 
+                color="warn"
+                (click)="onDeleteStudent(student)"
+                matTooltip="Delete Student"
+                class="action-btn delete-btn">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Actions Filter Row (Empty) -->
+        <ng-container matColumnDef="actions-filter">
+          <th mat-header-cell *matHeaderCellDef class="filter-cell actions-filter">
+            <!-- Empty cell for actions column -->
+          </th>
+        </ng-container>
+
+        <!-- Table Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-row"></tr>
+        <tr mat-header-row *matHeaderRowDef="filterColumns" class="filter-row"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="data-row"></tr>
+      </table>
+
+      <!-- No Results Message -->
+      <div class="no-results-container" *ngIf="dataSource.data.length === 0 && students.length > 0">
+        <mat-card class="no-results-card">
+          <mat-card-content class="no-results-content">
+            <mat-icon class="no-results-icon">search_off</mat-icon>
+            <h3 class="no-results-title">No Results Found</h3>
+            <p class="no-results-text">
+              No students match your current search criteria. Try adjusting your filters or clear all filters to see all students.
+            </p>
+            <button 
+              mat-raised-button 
+              color="accent" 
+              (click)="clearAllFilters()"
+              class="clear-filters-btn">
+              <mat-icon>clear_all</mat-icon>
+              Clear All Filters
+            </button>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- No Data Template -->
+    <ng-template #noDataTemplate>
+      <div class="no-data-container">
+        <mat-card class="no-data-card">
+          <mat-card-content class="no-data-content">
+            <mat-icon class="no-data-icon">school</mat-icon>
+            <h3 class="no-data-title">No Students Found</h3>
+            <p class="no-data-text">
+              Get started by adding your first student to the system.
+            </p>
+            <button 
+              mat-raised-button 
+              color="primary" 
+              (click)="onAddStudent()"
+              class="add-first-student-btn">
+              <mat-icon>person_add</mat-icon>
+              Add Your First Student
+            </button>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </ng-template>
+
+  </mat-card-content>
+</mat-card>

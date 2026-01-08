@@ -1,0 +1,174 @@
+/* Angular Material Theme and Global Styles */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: #f5f5f5;
+}
+
+/* Custom Material Design Overrides */
+.mdc-text-field--outlined .mdc-notched-outline .mdc-notched-outline__leading,
+.mdc-text-field--outlined .mdc-notched-outline .mdc-notched-outline__notch,
+.mdc-text-field--outlined .mdc-notched-outline .mdc-notched-outline__trailing {
+  border-width: 1px;
+}
+
+.mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline .mdc-notched-outline__leading,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline .mdc-notched-outline__notch,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline .mdc-notched-outline__trailing {
+  border-color: #e0e0e0;
+}
+
+.mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline .mdc-notched-outline__leading,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline .mdc-notched-outline__notch,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline .mdc-notched-outline__trailing {
+  border-color: #1976d2;
+}
+
+/* Success Snackbar Styling */
+.success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+/* Table Enhancements */
+.mat-mdc-table {
+  background: white;
+}
+
+.mat-mdc-header-row {
+  background-color: #fafafa;
+}
+
+.mat-mdc-row:hover {
+  background-color: #f5f5f5;
+  transition: background-color 0.2s ease;
+}
+
+/* Button Enhancements */
+.mat-mdc-raised-button {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease;
+}
+
+.mat-mdc-raised-button:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Form Field Enhancements */
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-form-field-error {
+  font-size: 0.75rem;
+  color: #f44336;
+}
+
+/* Card Enhancements */
+.mat-mdc-card {
+  transition: box-shadow 0.2s ease;
+}
+
+.mat-mdc-card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Icon Button Enhancements */
+.mat-mdc-icon-button {
+  transition: all 0.2s ease;
+}
+
+.mat-mdc-icon-button:hover {
+  transform: scale(1.1);
+}
+
+/* Loading States */
+.mat-mdc-raised-button:disabled {
+  opacity: 0.7;
+}
+
+/* Responsive Utilities */
+@media (max-width: 768px) {
+  .mat-mdc-form-field {
+    margin-bottom: 8px;
+  }
+  
+  .mat-mdc-card {
+    margin: 8px;
+  }
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scroll Behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus Indicators */
+.mat-mdc-button:focus,
+.mat-mdc-raised-button:focus,
+.mat-mdc-icon-button:focus {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

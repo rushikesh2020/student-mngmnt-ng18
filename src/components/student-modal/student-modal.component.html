@@ -1,0 +1,186 @@
+<div class="modal-overlay" *ngIf="isVisible" (click)="onBackdropClick($event)">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">
+        <mat-icon class="title-icon">{{ getTitleIcon() }}</mat-icon>
+        {{ getModalTitle() }}
+      </h2>
+      <button mat-icon-button (click)="onCancel()" class="close-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Modal Content -->
+    <div class="modal-content">
+      
+      <!-- Add/Edit Mode Form -->
+      <form [formGroup]="studentForm" *ngIf="modalData?.mode !== 'delete'">
+        <div class="form-grid">
+          
+          <mat-form-field appearance="outline">
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName" placeholder="Enter first name">
+            <mat-error *ngIf="studentForm.get('firstName')?.hasError('required')">
+              First name is required
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Middle Name -->
+          <mat-form-field appearance="outline">
+            <mat-label>Middle Name</mat-label>
+            <input matInput formControlName="middleName" placeholder="Enter middle name">
+            <mat-error *ngIf="studentForm.get('middleName')?.hasError('required')">
+              Middle name is required
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Last Name -->
+          <mat-form-field appearance="outline">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName" placeholder="Enter last name">
+            <mat-error *ngIf="studentForm.get('lastName')?.hasError('required')">
+              Last name is required
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Age -->
+          <mat-form-field appearance="outline">
+            <mat-label>Age</mat-label>
+            <input matInput type="number" formControlName="age" placeholder="Enter age">
+            <mat-error *ngIf="studentForm.get('age')?.hasError('required')">
+              Age is required
+            </mat-error>
+            <mat-error *ngIf="studentForm.get('age')?.hasError('min')">
+              Age must be greater than 10
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Class -->
+          <mat-form-field appearance="outline">
+            <mat-label>Class</mat-label>
+            <mat-select formControlName="class" placeholder="Select class">
+              <mat-option value="8th">8th</mat-option>
+              <mat-option value="9th">9th</mat-option>
+              <mat-option value="10th">10th</mat-option>
+              <mat-option value="11th">11th</mat-option>
+              <mat-option value="12th">12th</mat-option>
+            </mat-select>
+            <mat-error *ngIf="studentForm.get('class')?.hasError('required')">
+              Class is required
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Division -->
+          <mat-form-field appearance="outline">
+            <mat-label>Division</mat-label>
+            <mat-select formControlName="division" placeholder="Select division">
+              <mat-option value="A">A</mat-option>
+              <mat-option value="B">B</mat-option>
+              <mat-option value="C">C</mat-option>
+              <mat-option value="D">D</mat-option>
+            </mat-select>
+            <mat-error *ngIf="studentForm.get('division')?.hasError('required')">
+              Division is required
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Date of Birth -->
+          <mat-form-field appearance="outline">
+            <mat-label>Date of Birth</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="dateOfBirth" placeholder="Select date">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="studentForm.get('dateOfBirth')?.hasError('required')">
+              Date of birth is required
+            </mat-error>
+            <mat-error *ngIf="studentForm.get('dateOfBirth')?.hasError('max')">
+              Date must be before January 1, 2015
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Email -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Enter email address">
+            <mat-error *ngIf="studentForm.get('email')?.hasError('required')">
+              Email is required
+            </mat-error>
+            <mat-error *ngIf="studentForm.get('email')?.hasError('email')">
+              Please enter a valid email address
+            </mat-error>
+          </mat-form-field>
+
+        </div>
+      </form>
+
+      <!-- Delete Mode Display -->
+      <div *ngIf="modalData?.mode === 'delete'" class="delete-content">
+        <div class="delete-warning">
+          <mat-icon class="warning-icon">warning</mat-icon>
+          <p>Are you sure you want to delete this student record? This action cannot be undone.</p>
+        </div>
+        
+        <div class="student-details" *ngIf="modalData?.student as student">
+          <div class="detail-row">
+            <span class="detail-label">Name:</span>
+            <span class="detail-value">
+              {{ student.firstName }} {{ student.middleName }} {{ student.lastName }}
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Age:</span>
+            <span class="detail-value">{{ student.age }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Class:</span>
+            <span class="detail-value">{{ student.class }} - {{ student.division }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Date of Birth:</span>
+            <span class="detail-value">{{ formatDate(student.dateOfBirth) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Email:</span>
+            <span class="detail-value">{{ student.email }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Modal Actions -->
+    <div class="modal-actions">
+      <button 
+        mat-button 
+        (click)="onCancel()" 
+        class="cancel-button">
+        Cancel
+      </button>
+      
+      <!-- Add/Edit Mode Buttons -->
+      <button 
+        *ngIf="modalData?.mode !== 'delete'"
+        mat-raised-button 
+        color="primary"
+        [disabled]="!studentForm.valid || isLoading"
+        (click)="onSave()"
+        class="save-button">
+        {{ isLoading ? 'Saving...' : (modalData?.mode === 'add' ? 'Add Student' : 'Update Student') }}
+      </button>
+
+      <!-- Delete Mode Buttons -->
+      <button 
+        *ngIf="modalData?.mode === 'delete'"
+        mat-raised-button 
+        color="warn"
+        [disabled]="isLoading"
+        (click)="onConfirmDelete()"
+        class="delete-button">
+        {{ isLoading ? 'Deleting...' : 'Confirm Delete' }}
+      </button>
+    </div>
+
+  </div>
+</div>
