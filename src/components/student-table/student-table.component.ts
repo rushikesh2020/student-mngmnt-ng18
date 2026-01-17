@@ -191,3 +191,230 @@ export class StudentTableComponent implements OnChanges {
     });
   }
 }
+
+ isLoading: boolean = false;
+  transactionForm!: FormGroup;
+  disableSubmit: boolean = false;
+  Small_Figure_Decimal: number;
+
+  counterParties!: any;
+  filteredParties!: string[];
+
+  constructor(
+    private tranService: TransactionsService,
+    private accordionService: AccordionControlService,
+    private fb: FormBuilder,
+    private permissionService: KhataPermissionsService,
+    private globalService: GlobalService
+  ) {}
+
+  ngOnInit(): void {
+    if (
+      this.permissionService.isInterbankDealer() ||
+      this.permissionService.isMerchantDealer()
+    ) {
+      this.initializeForm();
+      this.transactionForm.disable();
+      this.disableSubmit = true;
+    } else {
+      this.initializeForm();
+      this.setupFieldDisabling();
+      this.setupCounterPartyAutoComplete();
+
+      this.globalService
+        .getKhatabookParameters("Small_Figure_Decimal")
+        .subscribe({
+          next: (res) => {
+            console.log(res);
+            this.Small_Figure_Decimal = +res["alldata"][0];
+          },
+        });
+    }
+  }
+
+  private setupCounterPartyAutoComplete() {
+    this.tranService.getCounterPartyData().subscribe({
+      next: (res) => {
+        console.log("counterParties", res, res.result);
+        const data = res.result;
+        this.counterParties = data;
+      },
+      error: (err) => {
+        console.log("Error while getting counter party data", err);
+      },
+    });
+    this.counterPartyControl?.valueChanges.subscribe({
+      next: (value) => {
+        this.filteredParties = this.filterCounterParties(value || "");
+        // console.log(this.filteredParties);
+      },
+    });
+  }
+
+  private filterCounterParties(value: string) {
+    const filterValue = value.toLowerCase();
+    const filteredParties: string[] = [];
+    for (let party of this.counterParties) {
+      if (
+        party.code.toLowerCase().includes(filterValue) ||
+        party.name.toLowerCase().includes(filterValue)
+      ) {
+        // console.log(`${party.code} (${party.name})`);
+        filteredParties.push(`${party.code} (${party.name})`);
+      }
+      // console.log(party.name, party.code);
+    }
+    // console.log(filteredParties);
+    return filteredParties;
+  }
+
+  private initializeForm(): void {
+    this.transactionForm = this.fb.group({
+      buyAmount: [
+        "",
+        [
+          Validators.required,
+          CustomFormValidators.allowedCharsValidator(),
+          CustomFormValidators.nonZeroValue(),
+        ],
+      ],
+      sellAmount: [
+        "",
+        [
+          Validators.required,
+          CustomFormValidators.allowedCharsValidator(),
+          CustomFormValidators.nonZeroValue(),
+        ],
+      ],
+      bigFigure: [
+        "",
+        [Validators.required, CustomFormValidators.numericRange(1, 999)],
+      ],
+      smallFigure: [
+        "",
+        [Validators.required, CustomFormValidators.numericRange(0, 9999)],
+      ],
+      counterParty: [""],
+      dealer: ["", [Validators.required]],
+    });
+  }
+
+  private setupFieldDisabling(): void {
+    this.buyAmountControl?.valueChanges.subscribe((buyValue) => {
+      if (buyValue) {
+        this.sellAmountControl?.disable({ emitEvent: false });
+      } else {
+        this.sellAmountControl?.enable({ emitEvent: false });
+      }
+    });
+
+    this.sellAmountControl?.valueChanges.subscribe((sellValue) => {
+      if (sellValue) {
+        this.buyAmountControl?.disable({ emitEvent: false });
+      } else {
+        this.buyAmountControl?.enable({ emitEvent: false });
+      }
+    });
+  }
+
+  // Allow digits (0-9)
+  onlyNumberKey(event: KeyboardEvent): boolean {
+    const charCode = event.key.charCodeAt(0);
+
+    if (charCode >= 48 && charCode <= 57) {
+      return true;
+    }
+
+    if (
+      [
+        "Backspace",
+        "Delete",
+        "ArrowLeft",
+        "ArrowRight",
+        "Tab",
+        "Home",
+        "End",
+      ].includes(event.key) ||
+      (event.ctrlKey && event.key === "a") ||
+      (event.shiftKey && event.key === "Home")
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  addTransaction(): void {
+    this.isLoading = true;
+    if (this.transactionForm.valid) {
+      let newTransaction = {
+        ...this.transactionForm.value,
+        buyAmount: this.buyAmountControl.value?.replace(/,/g, "") || null,
+        sellAmount: this.sellAmountControl.value?.replace(/,/g, "") || null,
+      };
+      this.tranService.addTransaction(newTransaction).subscribe({
+        next: (res) => {
+          this.isLoading = false;
+          console.log("Response on txn addition", res);
+          Swal.fire({
+            icon: "success",
+            text: "Transaction added successfully",
+            timer: 2000,
+          });
+          // this.accordionService.openPanel("transactions");
+          // (document.activeElement as HTMLElement)?.blur();
+          // this.transactionForm.reset({
+          //   bigFigure: this.bigFigureControl.value,
+          // });
+          // formDirective.resetForm({
+          //   bigFigure: this.bigFigureControl.value,
+          // });
+
+          // const savedBigFigure = this.transactionForm.get("bigFigure")?.value;
+          this.transactionForm.reset();
+          // this.transactionForm.patchValue({
+          //   bigFigure: savedBigFigure,
+          // });
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.error("Error adding Txn: ", err);
+          Swal.fire({
+            icon: "error",
+            text: "Error while adding Transaction",
+            timer: 2000,
+          });
+        },
+      });
+    } else {
+      this.isLoading = false;
+      this.transactionForm.markAllAsTouched();
+      Swal.fire({ icon: "warning", text: "Invalid form", timer: 2000 });
+    }
+  }
+
+  // Getters for easy access to form controls in template
+  get buyAmountControl() {
+    return this.transactionForm.get("buyAmount");
+  }
+
+  get sellAmountControl() {
+    return this.transactionForm.get("sellAmount");
+  }
+
+  get bigFigureControl() {
+    return this.transactionForm.get("bigFigure");
+  }
+
+  get smallFigureControl() {
+    return this.transactionForm.get("smallFigure");
+  }
+
+  get counterPartyControl() {
+    return this.transactionForm.get("counterParty");
+  }
+
+  get dealerControl() {
+    return this.transactionForm.get("dealer");
+  }
+}
