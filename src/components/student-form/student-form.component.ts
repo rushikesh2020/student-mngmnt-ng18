@@ -31,7 +31,7 @@ import { Student } from '../../models/student.interface';
 })
 export class StudentFormComponent implements OnChanges {
   @Input() student: Student | null = null;
-  @Input() isVisible: boolean = false;
+  @Input() isVisible: boolean = true;
 
   @Output() formSubmit = new EventEmitter<Student>();
   @Output() formCancel = new EventEmitter<void>();
