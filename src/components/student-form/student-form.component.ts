@@ -101,12 +101,16 @@ export class StudentFormComponent implements OnChanges {
   }
 
   private resetForm(): void {
+    const currentEmail = this.studentForm.get('email')?.value;
     this.studentForm.reset();
     this.studentForm.markAsPristine();
     this.studentForm.markAsUntouched();
     Object.keys(this.studentForm.controls).forEach(key => {
       this.studentForm.get(key)?.setErrors(null);
     });
+    if (currentEmail) {
+      this.studentForm.patchValue({ email: currentEmail });
+    }
   }
 
   onSubmit(): void {
