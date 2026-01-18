@@ -128,6 +128,7 @@ export class StudentFormComponent implements OnChanges {
     };
 
     this.formSubmit.emit(studentData);
+    this.resetForm();
   }
 
   onCancel(): void {
