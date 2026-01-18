@@ -95,11 +95,18 @@ export class StudentFormComponent implements OnChanges {
         dateOfBirth: new Date(this.student.dateOfBirth),
         email: this.student.email
       });
+    } else {
+      this.resetForm();
     }
   }
 
   private resetForm(): void {
     this.studentForm.reset();
+    this.studentForm.markAsPristine();
+    this.studentForm.markAsUntouched();
+    Object.keys(this.studentForm.controls).forEach(key => {
+      this.studentForm.get(key)?.setErrors(null);
+    });
   }
 
   onSubmit(): void {
@@ -121,12 +128,10 @@ export class StudentFormComponent implements OnChanges {
     };
 
     this.formSubmit.emit(studentData);
-    this.resetForm();
   }
 
   onCancel(): void {
     this.formCancel.emit();
-    this.resetForm();
   }
 
   private formatDate(date: Date): string {
