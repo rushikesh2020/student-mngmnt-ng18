@@ -133,6 +133,10 @@ export class StudentFormComponent implements OnChanges {
 
     this.formSubmit.emit(studentData);
     this.resetForm();
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   }
 
   onCancel(): void {
